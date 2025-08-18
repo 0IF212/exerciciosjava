@@ -1,0 +1,85 @@
+@startuml
+' ===== PACOTE CLIENTE =====
+abstract class Cliente {
+  - nome : String
+  - email : String
+  - contas : List<Conta>
+  + getNome() : String
+  + getEmail() : String
+  + getContas() : List<Conta>
+  + addConta(conta: Conta) : void
+  + removeConta(conta: Conta) : void
+  + getDocumento() : String
+}
+
+class PessoaFisica {
+  - cpf : String
+  + getDocumento() : String
+}
+
+class PessoaJuridica {
+  - cnpj : String
+  + getDocumento() : String
+}
+
+Cliente <|-- PessoaFisica
+Cliente <|-- PessoaJuridica
+
+' ===== PACOTE CONTA =====
+abstract class Conta {
+  - numero : String
+  # saldo : double
+  + getNumero() : String
+  + getSaldo() : double
+  + depositar(valor: double) : void
+  + sacar(valor: double) : void
+  + calcularRendimento(dias: int) : double
+}
+
+class ContaCorrente {
+  + calcularRendimento(dias: int) : double
+}
+
+class ContaCDI {
+  - taxaCDI : double
+  + calcularRendimento(dias: int) : double
+}
+
+class ContaInvestimentoAutomatico {
+  - produtos : List<ProdutoInvestimento>
+  - cliente : Cliente
+  + adicionarProduto(p: ProdutoInvestimento) : void
+  + calcularRendimento(dias: int) : double
+}
+
+Conta <|-- ContaCorrente
+Conta <|-- ContaCDI
+Conta <|-- ContaInvestimentoAutomatico
+
+Cliente "1" o-- "1..*" Conta
+
+' ===== PACOTE PRODUTO =====
+abstract class ProdutoInvestimento {
+  - nome : String
+  - descricao : String
+  + getNome() : String
+  + getDescricao() : String
+  + calcularRendimentoMensal(valor: double) : double
+}
+
+class RendaFixa {
+  - rendimentoMensal : double
+  - carenciaDias : int
+  + calcularRendimentoMensal(valor: double) : double
+}
+
+class RendaVariavel {
+  - rendimentoMensalEsperado : double
+  + calcularRendimentoMensal(valor: double) : double
+}
+
+ProdutoInvestimento <|-- RendaFixa
+ProdutoInvestimento <|-- RendaVariavel
+
+ContaInvestimentoAutomatico "1" o-- "0..*" ProdutoInvestimento
+@enduml
